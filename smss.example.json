@@ -1,0 +1,40 @@
+{
+    "admin_ids": [
+        76561198027894420
+    ],
+    "cvars": {
+        "g_craftingspeedmultiplier": 1000,
+        "g_playerinfinitestamina": 1,
+        "http_password": "secret_password",
+        "pcs_maxcorpsetime": 3600,
+        "schedule_shutdown_utc": [
+            10
+        ],
+        "steam_ugc": "2075026891",
+        "sv_maxuptime": 12,
+        "sv_motd": "Welcome to A Test Server! Don't forget to add us to your Miscreated Favorites.",
+        "sv_nobannedaccounts": 1,
+        "sv_servername": "A Test Server",
+        "sv_url": "If I had a URL for the server I would put it here.",
+        "wm_timeoffset": -1,
+        "wm_timescale": 4.33,
+        "wm_timescalenight": 5.08
+    },
+    "grant_guides": true,
+    "map": "islands",
+    "max_players": 36,
+    "reset_all_bases": false,
+    "reset_all_tents": true,
+    "reset_all_vechicles": false,
+    "reset_base_clan_ids": [
+        1
+    ],
+    "reset_base_owner_ids": [],
+    "reset_tent_clan_ids": [],
+    "reset_tent_owner_ids": [],
+    "reset_vehicle_clan_ids": [],
+    "reset_vehicle_owner_ids": [
+        76561198027894420
+    ],
+    "server_base_port": 64090
+}
