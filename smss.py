@@ -835,51 +835,44 @@ def main():
     # Output argparse values
     logging.debug(args)
 
-    run_server = True
+    # Read the JSON configuration file
+    json_config_file = Path(f"{script_path}/smss.json")
+    try:
+        with open(json_config_file) as f:
+            json_config = json.load(f)
+    except Exception as e:
+        logging.debug(e)
+        logging.debug("Configuration file load error. Using default configuration")
+        json_config={}
 
-    while run_server:
+    logging.debug(json_config)
+    
+    json_config['config_file'] = f"{json_config_file}"
 
-        # Read the JSON configuration file
-        json_config_file = Path(f"{script_path}/smss.json")
-        try:
-            with open(json_config_file) as f:
-                json_config = json.load(f)
-        except Exception as e:
-            logging.debug(e)
-            logging.debug("Configuration file load error. Using default configuration")
-            json_config={}
+    smss = SmssConfig(**json_config)
 
-        logging.debug(json_config)
-        
-        json_config['config_file'] = f"{json_config_file}"
+    # Setup admin using Theros admin mod.
+    smss.setup_admin()
+    
+    # Write hosting.cfg
+    smss.write_hosting_cfg()
+    
+    # Prepare the Miscreated server
+    smss.prepare_server()
+    
+    # Execute database maintenance "tricks"
+    smss.database_tricks()
 
-        smss = SmssConfig(**json_config)
+    # Record the time we start the server
+    start_time = time.time()
 
-        # Setup admin using Theros admin mod.
-        smss.setup_admin()
-        
-        # Write hosting.cfg
-        smss.write_hosting_cfg()
-        
-        # Prepare the Miscreated server
-        smss.prepare_server()
-        
-        # Execute database maintenance "tricks"
-        smss.database_tricks()
+    # # Launch the Miscreated server
+    smss.launch_server()
 
-        # Record the time we start the server
-        start_time = time.time()
-
-        # # Launch the Miscreated server
-        smss.launch_server()
-
-        # Restart the server if a stop file does not exist
-        run_server = not smss.stop_file_exists()
-
-        # If the server executed prematurely sleep before exiting this script
-        if time.time() - start_time < 10:
-            print("The server process exited in less than 10 seconds. This script will sleep for five minutes before restarting.")
-            time.sleep(300)
+    # If the server executed prematurely sleep before exiting this script
+    if time.time() - start_time < 10:
+        print("The server process exited in less than 10 seconds. This script will sleep for five minutes before restarting.")
+        time.sleep(300)
     
 
 if __name__ == '__main__':
