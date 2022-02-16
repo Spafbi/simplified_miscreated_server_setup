@@ -737,8 +737,12 @@ class SmssConfig:
         self.config['server_build_id'] = current_server_build_id
         self.write_json_cfg()
         
+        build_ids_match = (installed_server_build_id == current_server_build_id)
+        miscreated_binary_exists = os.path.exists(self.miscreated_server_cmd)
+        server_build_non_negative = (current_server_build_id != -1)
+        
         # If the installed Miscreated server has the same build id as the steam build ID, skip this step.
-        if (installed_server_build_id == current_server_build_id) and (current_server_build_id != -1):
+        if miscreated_binary_exists and build_ids_match and server_build_non_negative:
             return
 
         # Create the command used to validate/install the server
