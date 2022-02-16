@@ -102,6 +102,10 @@ for %%x in (bs4 colorama requests) do (
 
 :runScript
 "%PYTHONBIN%" %CORESCRIPT%
+
+REM If a single_run file exists exit the script
+if exist "%BASEPATH%\single_run*" goto :end
+
 goto :start
 
 :noSpaces
