@@ -103,14 +103,19 @@ for %%x in (bs4 colorama requests) do (
 :runScript
 "%PYTHONBIN%" %CORESCRIPT%
 
-REM If a single_run file exists exit the script
-if exist "%BASEPATH%\single_run*" goto :end
+REM If a single_run file exists exit at this time
+if exist "%BASEPATH%\single_run*" goto :singleRun
 
 goto :start
 
 :noSpaces
 echo This script cannot be run from a path having spaces.
 echo     %BASEPATH%
+goto :end
+
+:singleRun
+echo A file or directory starting with "single_run" exists. Remove this file to
+echo allow the server to restart.
 goto :end
 
 :stopMessage
