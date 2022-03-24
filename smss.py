@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup 
-from collections import OrderedDict
 from colorama import init
 from copy import deepcopy
 from datetime import date, datetime
@@ -157,6 +156,7 @@ class SmssConfig:
         self.add_clan_members_for_timer_resets()
         self.reset_base_timers()
         self.reset_tent_timers()
+        self.quick_vehicle_despawn()
         self.reset_vehicle_timers()
         
 
@@ -660,6 +660,16 @@ class SmssConfig:
 
         sql = "UPDATE Structures SET AbandonTimer=2419200 WHERE StructureID IN ({});"
         self.reset_base_object_timers(tents, self.reset_tent_owner_ids, sql, 'tent')
+
+
+    def quick_vehicle_despawn(self):
+        """Reset vehicle timers for quick despawns after restart
+        """
+        quick_vehicle_despawn = int(self.config.get('quick_vehicle_despawn', False))
+        if quick_vehicle_despawn:
+            sql = f"UPDATE Vehicles SET AbandonTimer={quick_vehicle_despawn};"
+            self.get_result_set(sql)
+            return
 
 
     def reset_vehicle_timers(self):
