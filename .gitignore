@@ -150,3 +150,6 @@ smss.json
 stop
 stop.txt
 temp/
+latest_release
+local_release
+smss_download.py
