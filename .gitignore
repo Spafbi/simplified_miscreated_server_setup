@@ -154,3 +154,4 @@ latest_release
 local_release
 smss_download.py
 single_run.txt
+Pipfile.lock
