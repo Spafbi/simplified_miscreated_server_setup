@@ -205,8 +205,10 @@ class SmssConfig:
         if sv_url:
             hosting_cfg['sv_url'] = sv_url
         override_sv_maxuptime = self.override_sv_maxuptime()
+        logging.debug(f'sv_maxuptime: {override_sv_maxuptime}')
         if override_sv_maxuptime:
             hosting_cfg['sv_maxuptime'] = override_sv_maxuptime
+        logging.debug(hosting_cfg)
         return hosting_cfg
 
 
@@ -524,14 +526,18 @@ class SmssConfig:
 
     def override_sv_maxuptime(self):
         if not self.sv_maxuptime_range.get('enabled', False):
+            logging.debug(f'self.sv_maxuptime_range: {self.sv_maxuptime_range}')
             return False
         
         try:
             min_val = float(self.sv_maxuptime_range.get('min', 8))
-            max_val = float(self.sv_maxuptime_range.get('min', 12))
+            max_val = float(self.sv_maxuptime_range.get('max', 12))
         except:
             min_val = 8
             max_val = 12
+
+        logging.debug(f'override_sv_maxuptime min: {min_val}')
+        logging.debug(f'override_sv_maxuptime max: {max_val}')
 
         from random import SystemRandom
         return round(SystemRandom().uniform(min_val, max_val), 1)
@@ -795,6 +801,7 @@ class SmssConfig:
         """Writes the hosting.cfg file with the current class values
         """
         logging.debug('method: write_hosting_cfg')
+        logging.debug(f'hosting_config: {self.hosting_config}')
         hosting_cfg = open(self.miscreated_server_config, "w")
         for key, value in self.hosting_config.items():
             if type(value) is str:
@@ -885,6 +892,7 @@ def main():
     
     # Write hosting.cfg
     smss.write_hosting_cfg()
+    exit()
     
     # Prepare the Miscreated server
     smss.prepare_server()

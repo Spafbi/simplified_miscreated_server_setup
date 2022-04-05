@@ -18,9 +18,9 @@ set DOWNLOAD=0
 powershell -Command "$request=${env:GITURL}; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Write-Output (Invoke-WebRequest -UseBasicParsing $request |ConvertFrom-Json |Select tag_name -ExpandProperty tag_name)">latest_release
 
 set CORESCRIPT=smss.py
-set PYTHONPTH=python39._pth
-set PYTHONVERSION=3.9.10
-set PYTHONZIP=python39.zip
+set PYTHONPTH=python310._pth
+set PYTHONVERSION=3.10.4
+set PYTHONZIP=python310.zip
 
 set PYTHONURL=https://www.python.org/ftp/python/%PYTHONVERSION%/python-%PYTHONVERSION%-embed-amd64.zip
 set PYTHONDIR=%BASEPATH%\python
