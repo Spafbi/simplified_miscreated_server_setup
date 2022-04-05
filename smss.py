@@ -70,6 +70,7 @@ class SmssConfig:
         self.steamcmd = Path(f"{self.steamcmd_path}/steamcmd.exe")
 
         # Variable contianing hosting.cfg contents
+        self.sv_maxuptime_range = self.config.get("sv_maxuptime_range", dict())
         self.hosting_config = self.get_hosting_cvars()
 
         # Get our admin IDs
@@ -203,6 +204,9 @@ class SmssConfig:
             hosting_cfg['sv_motd'] = sv_motd
         if sv_url:
             hosting_cfg['sv_url'] = sv_url
+        override_sv_maxuptime = self.override_sv_maxuptime()
+        if override_sv_maxuptime:
+            hosting_cfg['sv_maxuptime'] = override_sv_maxuptime
         return hosting_cfg
 
 
@@ -516,6 +520,21 @@ class SmssConfig:
         this_steam_ugc = ','.join(str(m) for m in mod_ids)
         
         return this_steam_ugc, mod_ids
+
+
+    def override_sv_maxuptime(self):
+        if not self.sv_maxuptime_range.get('enabled', False):
+            return False
+        
+        try:
+            min_val = float(self.sv_maxuptime_range.get('min', 8))
+            max_val = float(self.sv_maxuptime_range.get('min', 12))
+        except:
+            min_val = 8
+            max_val = 12
+
+        from random import SystemRandom
+        return round(SystemRandom().uniform(min_val, max_val), 1)
 
 
     def prepare_server(self):
