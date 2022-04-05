@@ -892,7 +892,6 @@ def main():
     
     # Write hosting.cfg
     smss.write_hosting_cfg()
-    exit()
     
     # Prepare the Miscreated server
     smss.prepare_server()
