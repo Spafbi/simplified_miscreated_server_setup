@@ -897,7 +897,10 @@ def main():
     smss.prepare_server()
     
     # Execute database maintenance "tricks"
-    smss.database_tricks()
+    try:
+        smss.database_tricks()
+    except Exception as e:
+        logging.info(e)
 
     # Record the time we start the server
     start_time = time.time()
