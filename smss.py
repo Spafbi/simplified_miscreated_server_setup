@@ -13,6 +13,7 @@ import json
 import logging
 import math
 import os
+import re
 import requests
 import shutil
 import sqlite3
@@ -52,6 +53,7 @@ class SmssConfig:
         self.script_path = os.path.dirname(os.path.realpath(__file__))
         this_path = f"{self.script_path}/MiscreatedServer"
         self.miscreated_server_path = Path(this_path)
+        self.archive_path = Path(f"{self.miscreated_server_path}/archives")
         
         # SteamCMD installation directory
         self.steamcmd_path = Path(f"{self.script_path}/SteamCMD")
@@ -138,8 +140,58 @@ class SmssConfig:
         dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
         return dist
     
+    
+    def cleanup_files_and_dirs(self):
+        # self.self.archive_path
+
+        this_now = datetime.now()
+        today = this_now.strftime("%Y-%m-%d")
+        
+        archive = [ "server*.log", "logs", "logbackups" ]
+        delete_objects = {
+            "object_paths": [ "server*.log", "logs", "logbackups", "anticheat*.xml" , "user*" ],
+            "skip_paths_with_date": [ {'logs', today} ]
+        }
+        
+    
+    def add_to_archive(self, zip_file, this_path):
+        zipf = zipfile.ZipFile(zip_file,
+                               'a',
+                               compression=zipfile.ZIP_DEFLATED,
+                               compresslevel=9)
+        
+        file_list = list()
+        file_list.extend(glob(str(this_path)))
+        
+        print(file_list)
+        
+        # if os.path.isfile(this_path):
+        #     zipf.write(this_path)
+        # elif os.path.isdir(this_path):
+        #     for root, dirs, files in os.walk(this_path):
+        #         for file in files:
+        #             zipf.write(os.path.join(root, file))
+        zipf.close()
+    
+    
+    def archive_directory(self, zip_file, target_directory):
+        try:
+            os.remove(zip_file)
+        except:
+            pass
+        
+        zipf = zipfile.ZipFile(zip_file,
+                               'a',
+                               compression=zipfile.ZIP_DEFLATED,
+                               compresslevel=9)
+        for root, dirs, files in os.walk(target_directory):
+            for file in files:
+                zipf.write(os.path.join(root, file))
+        zipf.close()
+    
             
     def create_required_paths(self):
+        self.archive_path.mkdir(parents=True, exist_ok=True)
         self.miscreated_server_path.mkdir(parents=True, exist_ok=True)
         self.steamcmd_path.mkdir(parents=True, exist_ok=True)
         self.temp_path.mkdir(parents=True, exist_ok=True)
@@ -897,7 +949,13 @@ def main():
     smss.prepare_server()
     
     # Execute database maintenance "tricks"
-    smss.database_tricks()
+    try:
+        smss.database_tricks()
+    except Exception as e:
+        logging.info(e)
+
+    # Execute database maintenance "tricks"
+    # smss.cleanup_logs()
 
     # Record the time we start the server
     start_time = time.time()
