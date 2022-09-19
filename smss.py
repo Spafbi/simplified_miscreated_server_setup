@@ -302,7 +302,11 @@ class SmssConfig:
 
 
     def get_server_build_id(self):
-        result = requests.get('https://api.steamcmd.net/v1/info/302200')
+        try:
+            result = requests.get('https://api.steamcmd.net/v1/info/302200', timeout=10)
+        except:
+            return -1
+     
         if result.status_code != 200:
             return -1
         app_info = json.loads(result.text)
@@ -775,8 +779,13 @@ class SmssConfig:
         build_ids_match = (installed_server_build_id == current_server_build_id)
         miscreated_binary_exists = os.path.exists(self.miscreated_server_cmd)
         server_build_non_negative = (current_server_build_id != -1)
+
+        if not server_build_non_negative:
+            logging.info('The current server build could not be retrieved from api.steamcmd.net.')
+            logging.info('The server will be validated in case there\'s a difference in versions.')
         
-        # If the installed Miscreated server has the same build id as the steam build ID, skip this step.
+        # If the installed Miscreated server has the same build id as the steam build ID,
+        # and if server_build_non_negative is true, return.
         if miscreated_binary_exists and build_ids_match and server_build_non_negative:
             return
 

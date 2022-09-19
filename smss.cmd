@@ -24,8 +24,37 @@ if NOT "%BASEPATH%"=="%BASEPATH: =%" goto :noSpaces
 REM If a skip file exists, python won't be checked/downloaded
 if exist "%BASEPATH%\skip*" goto :runScript
 
+REM If less than ten seconds has passed since the last script version check, python won't be checked/downloaded
+REM Set the "last git query time"
+if exist "last_git_request_time" (
+  set /p LAST_GIT_REQ=<last_git_request_time
+) else (
+  set LAST_GIT_REQ=0
+)
+
+REM Get the current time
+for /F "tokens=1-4 delims=:.," %%a in ("%time%") do (
+   set /A "CURRENT_GIT_REQ=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+
+REM Calculate the time difference
+set /a "GIT_REQ_TIME_DIFF=%CURRENT_GIT_REQ%-%LAST_GIT_REQ%"
+
+REM If the difference is less than 10 seconds (1000), skip updating.
+if %GIT_REQ_TIME_DIFF% LSS 1000 (
+  echo It's been less than 10 seconds since the last request to github
+  echo ...skipping script update and jumping to running the script
+  goto :runScript
+)
+
 echo Checking for new Simplified Miscreated Server Script updates...
 powershell -Command "$request=${env:GITURL}; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Write-Output (Invoke-WebRequest -UseBasicParsing $request |ConvertFrom-Json |Select tag_name -ExpandProperty tag_name)">latest_release
+
+REM Get the current time
+for /F "tokens=1-4 delims=:.," %%a in ("%time%") do (
+   set /A "CURRENT_GIT_REQ=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+echo %CURRENT_GIT_REQ%>last_git_request_time
 
 REM This if statement exists so I don't overwrite the core script while developing
 if exist .\.git\ (

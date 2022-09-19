@@ -155,3 +155,4 @@ local_release
 smss_download.py
 single_run.txt
 Pipfile.lock
+last_git_request_time
